@@ -1,0 +1,14 @@
+{
+  "name": "voidm.com",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimalist personal homepage of voidm.com",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public",
+    "deploy:prod": "wrangler pages deploy public --branch=main --project-name=voidm-com"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

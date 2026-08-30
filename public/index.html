@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="voidm.com — engineer & reverse engineer, driven by curiosity.">
+<meta name="theme-color" content="#0b0d10">
+<title>voidm.com</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-head">
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">
+    <span class="sun">☀</span><span class="moon">☾</span>
+  </button>
+</header>
+
+<main class="container">
+
+  <pre class="logo" aria-hidden="true">
+            _     _           
+  __   _____ (_) __| |_ __ ___  
+  \ \ / / _ \| |/ _` | '_ ` _ \ 
+   \ V / (_) | | (_| | | | | | |
+    \_/ \___/|_|\__,_|_| |_| |_|
+  </pre>
+
+  <div class="sysinfo">
+    <span class="prompt">$</span> whoami
+    voidm <span class="tag">engineer & reverse engineer — driven by curiosity</span>
+
+    <span class="prompt">$</span> uname -a
+    voidm v1.0 · minimalist personal homepage · written with zero dependencies
+
+    <span class="prompt">$</span> uptime
+    coding, shipping & building in public · remote · always online
+
+    <span class="prompt">$</span> cat bio.txt
+    Known by all, yet known by none — a name on everyone's lips, a face in no one's mind.
+  </div>
+
+  <section class="section" id="articles">
+    <h2># articles</h2>
+    <div class="items" id="articles-list"></div>
+  </section>
+
+  <section class="section" id="projects">
+    <h2># open source</h2>
+    <p class="hint">Loading repos from <a href="https://github.com/marlkiller" target="_blank" rel="noopener">github.com/marlkiller</a> …</p>
+    <div class="items" id="repos"></div>
+  </section>
+
+  <section class="section" id="contact">
+    <h2># contact</h2>
+    <div class="item"><span class="label">GitHub</span><span class="val"><a href="https://github.com/marlkiller" target="_blank" rel="noopener">github.com/marlkiller</a></span></div>
+    <div class="item"><span class="label">Email</span><span class="val"><a href="mailto:marlkiller@voidm.com">marlkiller@voidm.com</a></span></div>
+  </section>
+
+</main>
+
+<footer>© <span id="year"></span> voidm.com · Powered by Cloudflare Pages</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

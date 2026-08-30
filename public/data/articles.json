@@ -1,0 +1,46 @@
+[
+  {
+    "label": "crypto",
+    "date": "2026-05-29",
+    "title": "FlowForge Crypto — a visual, node-based cryptography workbench",
+    "url": "https://www.52pojie.cn/thread-2110203-1-1.html",
+    "live": "https://flowforge-crypto.pages.dev/"
+  },
+  {
+    "label": "remote",
+    "date": "2026-05-17",
+    "title": "rust-desk-light — a lightweight cross-platform remote assistant in Rust",
+    "url": "https://www.52pojie.cn/thread-2108126-1-1.html"
+  },
+  {
+    "label": "forensics",
+    "date": "2026-05-15",
+    "title": "LUKS full-disk decryption: extracting the master key from memory & offline mounting",
+    "url": "https://www.52pojie.cn/thread-2107951-1-1.html"
+  },
+  {
+    "label": "reversing",
+    "date": "2025-05-15",
+    "title": "A macOS process injection tool (PID, name & launch injection)",
+    "url": "https://www.52pojie.cn/thread-2031680-1-1.html"
+  },
+  {
+    "label": "reversing",
+    "date": "2025-04-26",
+    "title": "Hopper Disassembler 5.18.1 for macOS — cracked, SIP on",
+    "url": "https://www.52pojie.cn/thread-2027339-1-1.html",
+    "live": "https://pixeldrain.com/u/UNTFi5DB"
+  },
+  {
+    "label": "reversing",
+    "date": "2025-03-14",
+    "title": "lldb debugging a DB client + license reversing + a python3 keygen (win/mac)",
+    "url": "https://www.52pojie.cn/thread-2014469-1-1.html"
+  },
+  {
+    "label": "reversing",
+    "date": "2024-05-02",
+    "title": "Surge for macOS 5.x — a reversing walkthrough",
+    "url": "https://www.52pojie.cn/thread-1919765-1-1.html"
+  }
+]
