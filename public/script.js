@@ -3,53 +3,297 @@
 
   var GH_USER = "marlkiller";
 
+  /* ---------- interactive background (canvas + web audio) ---------- */
+  (function () {
+    var canvas = document.getElementById("bg-canvas");
+    if (!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var container = document.querySelector(".container");
+    var particles = [];
+    var dpr = window.devicePixelRatio || 1;
+    var W, H;
+    var raf;
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var PALETTE = [
+      "#7aa2f7", "#bb9af7", "#9ece6a", "#e0af68",
+      "#f7768e", "#73daca", "#ff9e64", "#7dcfff"
+    ];
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = W + "px";
+      canvas.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function rand(a, b) { return Math.random() * (b - a) + a; }
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function spawn(x, y, type) {
+      var color = pick(PALETTE);
+      var baseSize = Math.min(W, H) * 0.06;
+      if (type === "circle") {
+        particles.push({
+          x: x, y: y, r: 0,
+          maxR: rand(baseSize * 0.4, baseSize * 1.2),
+          color: color, alpha: 0.7,
+          vx: rand(-1, 1), vy: rand(-1, 1),
+          life: 1, decay: rand(0.012, 0.025),
+          shape: "circle"
+        });
+      } else if (type === "square") {
+        var s = rand(baseSize * 0.3, baseSize * 0.8);
+        particles.push({
+          x: x, y: y, s: 0, maxS: s,
+          rot: rand(0, Math.PI * 2),
+          color: color, alpha: 0.6,
+          vx: rand(-1.5, 1.5), vy: rand(-1.5, 1.5),
+          life: 1, decay: rand(0.01, 0.02),
+          shape: "square"
+        });
+      } else if (type === "ring") {
+        particles.push({
+          x: x, y: y, r: 0,
+          maxR: rand(baseSize * 0.8, baseSize * 1.8),
+          color: color, alpha: 0.5,
+          life: 1, decay: rand(0.015, 0.03),
+          shape: "ring"
+        });
+      } else if (type === "line") {
+        var angle = rand(0, Math.PI * 2);
+        var len = rand(baseSize * 0.5, baseSize * 1.5);
+        particles.push({
+          x: x, y: y,
+          ex: x + Math.cos(angle) * len,
+          ey: y + Math.sin(angle) * len,
+          color: color, alpha: 0.6,
+          life: 1, decay: rand(0.015, 0.03),
+          shape: "line"
+        });
+      }
+    }
+
+    var audioCtx = null;
+    function beep(freq, dur) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    }
+
+    var NOTES = [261, 293, 329, 349, 392, 440, 493, 523, 587, 659, 698, 784];
+
+    function trigger(x, y) {
+      if (reducedMotion) return;
+      var shapes = ["circle", "square", "ring", "line"];
+      var count = Math.floor(rand(2, 5));
+      for (var i = 0; i < count; i++) {
+        spawn(x + rand(-20, 20), y + rand(-20, 20), pick(shapes));
+      }
+      beep(pick(NOTES), rand(0.15, 0.35));
+    }
+
+    function isInContent(el) {
+      while (el) {
+        if (el === container) return true;
+        el = el.parentElement;
+      }
+      return false;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = particles.length - 1; i >= 0; i--) {
+        var p = particles[i];
+        p.life -= p.decay;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        p.x += p.vx || 0;
+        p.y += p.vy || 0;
+        ctx.globalAlpha = p.alpha * p.life;
+        ctx.fillStyle = p.color;
+        ctx.strokeStyle = p.color;
+
+        if (p.shape === "circle") {
+          p.r += (p.maxR - p.r) * 0.12;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.shape === "square") {
+          p.s += (p.maxS - p.s) * 0.12;
+          p.rot += 0.02;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s);
+          ctx.restore();
+        } else if (p.shape === "ring") {
+          p.r += (p.maxR - p.r) * 0.08;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.stroke();
+        } else if (p.shape === "line") {
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.ex, p.ey);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+      raf = requestAnimationFrame(draw);
+    }
+
+    document.addEventListener("mousedown", function (e) {
+      if (isInContent(e.target)) return;
+      trigger(e.clientX, e.clientY);
+    });
+    document.addEventListener("touchstart", function (e) {
+      if (isInContent(e.target)) return;
+      for (var i = 0; i < e.touches.length; i++) {
+        trigger(e.touches[i].clientX, e.touches[i].clientY);
+      }
+    }, { passive: true });
+
+    if (!reducedMotion) draw();
+  })();
+
+  /* ---------- music generator (web audio api) ---------- */
+  (function () {
+    var btn = document.getElementById("music-toggle");
+    var label = document.getElementById("music-label");
+    if (!btn) return;
+
+    var current = localStorage.getItem("voidm-music") || "";
+    var audioCtx = null;
+    var playing = false;
+    var nodes = [];
+    var timers = [];
+    var gainNode = null;
+
+    function initCtx() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.7;
+      gainNode.connect(audioCtx.destination);
+    }
+
+    function stopAll() {
+      nodes.forEach(function (n) { try { n.stop(); } catch (e) {} });
+      timers.forEach(function (t) { clearTimeout(t); clearInterval(t); });
+      nodes = [];
+      timers = [];
+      playing = false;
+    }
+
+    function playChiptune() {
+      initCtx();
+      var scale = [261, 293, 329, 349, 392, 440, 493, 523, 587, 659];
+      var step = 60 / 140 / 2;
+      var seq = [0,4,7,12,7,4,0,12,9,5,12,9,5,0,7,4];
+      var i = 0;
+
+      function note() {
+        if (!playing) return;
+        var freq = scale[seq[i % seq.length] % scale.length];
+        var osc = audioCtx.createOscillator();
+        var g = audioCtx.createGain();
+        osc.type = "square";
+        osc.frequency.value = freq;
+        g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + step * 0.9);
+        osc.connect(g);
+        g.connect(gainNode);
+        osc.start();
+        osc.stop(audioCtx.currentTime + step);
+        nodes.push(osc);
+        i++;
+      }
+      note();
+      timers.push(setInterval(note, step * 1000));
+    }
+
+    function start() {
+      stopAll();
+      playing = true;
+      playChiptune();
+      label.textContent = "chiptune";
+      btn.classList.add("active");
+    }
+
+    function stop() {
+      stopAll();
+      label.textContent = "";
+      btn.classList.remove("active");
+      current = "";
+      localStorage.removeItem("voidm-music");
+    }
+
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (playing) {
+        stop();
+      } else {
+        current = "chiptune";
+        localStorage.setItem("voidm-music", current);
+        start();
+      }
+    });
+
+    if (current === "chiptune") start();
+  })();
+
   /* ---------- theme: follow system + manual override ---------- */
   var root = document.documentElement;
   var stored = localStorage.getItem("voidm-theme");
 
   function applyTheme() {
-    if (stored === "light" || stored === "dark") {
-      root.setAttribute("data-theme", stored);
-    } else {
-      root.setAttribute("data-theme", "auto");
-    }
+    root.setAttribute("data-theme",
+      stored === "light" || stored === "dark" ? stored : "auto"
+    );
   }
   applyTheme();
 
-  var toggle = document.getElementById("theme-toggle");
+  var themeToggle = document.getElementById("theme-toggle");
   var meta = document.querySelector('meta[name="theme-color"]');
+
   function syncMeta() {
     var theme = root.getAttribute("data-theme");
-    var mq = window.matchMedia("(prefers-color-scheme: dark)");
-    var isDark =
-      theme === "dark" || (theme === "auto" && mq.matches);
+    var isDark = theme === "dark" || (theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
     if (meta) meta.setAttribute("content", isDark ? "#0b0d10" : "#ffffff");
   }
-  toggle.addEventListener("click", function () {
+
+  themeToggle.addEventListener("click", function () {
     var cur = root.getAttribute("data-theme");
     if (cur === "auto") {
-      // resolve to actual current appearance first
-      var resolved = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-      var next = resolved === "dark" ? "light" : "dark";
-      stored = next;
-      root.setAttribute("data-theme", next);
+      var resolved = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      stored = resolved === "dark" ? "light" : "dark";
     } else {
-      var n2 = cur === "dark" ? "light" : "dark";
-      stored = n2;
-      root.setAttribute("data-theme", n2);
+      stored = cur === "dark" ? "light" : "dark";
     }
+    root.setAttribute("data-theme", stored);
     localStorage.setItem("voidm-theme", stored);
     syncMeta();
   });
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
+
+  matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", function () {
-      if (root.getAttribute("data-theme") === "auto") {
-        root.setAttribute("data-theme", "auto");
-        syncMeta();
-      }
+      if (root.getAttribute("data-theme") === "auto") syncMeta();
     });
   syncMeta();
 
@@ -61,10 +305,7 @@
   var articleList = document.getElementById("articles-list");
   if (articleList) {
     fetch("data/articles.json")
-      .then(function (res) {
-        if (!res.ok) throw new Error(res.status);
-        return res.json();
-      })
+      .then(function (res) { return res.json(); })
       .then(function (list) {
         if (!Array.isArray(list) || !list.length) return;
         list.forEach(function (a) {
@@ -86,7 +327,7 @@
               live.target = "_blank";
               live.rel = "noopener";
               live.className = "live";
-              live.textContent = "↗";
+              live.textContent = "\u2197";
               val.appendChild(live);
             }
             if (a.label) {
@@ -109,22 +350,13 @@
           articleList.appendChild(row);
         });
       })
-      .catch(function () {});
+      .catch(function () {}); // silent fail — article list is non-critical
   }
 
   /* ---------- GitHub repos (client-side fetch) ---------- */
   var repos = document.getElementById("repos");
   var hint = document.querySelector("#projects .hint");
   var API = "https://api.github.com/users/" + GH_USER + "/repos?per_page=100&sort=updated";
-
-  function repoLink(r) {
-    var a = document.createElement("a");
-    a.href = r.html_url;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = r.name;
-    return a;
-  }
 
   function render(list) {
     if (!list.length) {
@@ -139,14 +371,18 @@
       row.className = "item";
       var val = document.createElement("span");
       val.className = "val";
-      val.appendChild(repoLink(r));
+      var a = document.createElement("a");
+      a.href = r.html_url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = r.name;
+      val.appendChild(a);
       row.appendChild(val);
       var meta = document.createElement("span");
       meta.className = "proj-meta";
       meta.textContent =
-        (r.language ? r.language + " · " : "") +
-        r.stargazers_count +
-        "★ · " +
+        (r.language ? r.language + " \u00b7 " : "") +
+        r.stargazers_count + "\u2605 \u00b7 " +
         (r.fork ? "fork" : "source");
       row.appendChild(meta);
       repos.appendChild(row);
@@ -162,32 +398,24 @@
 
   function showError() {
     hint.innerHTML = "";
-    var text = document.createTextNode("Couldn't load repos. ");
-    hint.appendChild(text);
+    hint.appendChild(document.createTextNode("Couldn't load repos. "));
     var a = document.createElement("a");
     a.href = "https://github.com/" + GH_USER;
     a.target = "_blank";
     a.rel = "noopener";
-    a.textContent = "See them on GitHub →";
+    a.textContent = "See them on GitHub \u2192";
     hint.appendChild(a);
   }
 
   var controller = window.AbortController ? new AbortController() : null;
-  var timeout = controller ? setTimeout(function () {
-    controller.abort();
-  }, 10000) : null;
+  var timeout = controller ? setTimeout(function () { controller.abort(); }, 10000) : null;
 
   fetch(API, controller ? { signal: controller.signal } : {})
-    .then(function (res) {
-      if (!res.ok) throw new Error(res.status);
-      return res.json();
-    })
+    .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
     .then(render)
     .catch(showError)
     .finally(function () {
       if (timeout) clearTimeout(timeout);
-      if (hint && hint.textContent.indexOf("Loading") === 0) {
-        hint.textContent = "";
-      }
+      if (hint && hint.textContent.indexOf("Loading") === 0) hint.textContent = "";
     });
 })();
