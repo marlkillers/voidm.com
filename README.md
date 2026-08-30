@@ -1,6 +1,6 @@
 # voidm.com
 
-Minimalist personal homepage.
+Minimalist personal homepage. [Live →](https://voidm.com)
 
 - Zero dependencies
 - Auto dark/light theme
