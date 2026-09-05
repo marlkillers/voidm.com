@@ -357,16 +357,41 @@
   var repos = document.getElementById("repos");
   var hint = document.querySelector("#projects .hint");
   var API = "https://api.github.com/users/" + GH_USER + "/repos?per_page=100&sort=updated";
+  var PAGE_SIZE = 10;
+  var currentPage = 1;
+  var allRepos = [];
 
-  function render(list) {
-    if (!list.length) {
-      repos.innerHTML = '<div class="item"><span class="val">No public repos.</span></div>';
-      return;
-    }
-    list.sort(function (a, b) {
-      return (b.stargazers_count || 0) - (a.stargazers_count || 0);
-    });
-    list.forEach(function (r) {
+  var paginationWrap = document.createElement("div");
+  paginationWrap.className = "pagination";
+
+  var prevBtn = document.createElement("button");
+  prevBtn.textContent = "\u2190 prev";
+  prevBtn.className = "page-btn";
+  prevBtn.addEventListener("click", function () {
+    if (currentPage > 1) { currentPage--; renderPage(); }
+  });
+
+  var pageInfo = document.createElement("span");
+  pageInfo.className = "page-info";
+
+  var nextBtn = document.createElement("button");
+  nextBtn.textContent = "next \u2192";
+  nextBtn.className = "page-btn";
+  nextBtn.addEventListener("click", function () {
+    var totalPages = Math.ceil(allRepos.length / PAGE_SIZE);
+    if (currentPage < totalPages) { currentPage++; renderPage(); }
+  });
+
+  paginationWrap.appendChild(prevBtn);
+  paginationWrap.appendChild(pageInfo);
+  paginationWrap.appendChild(nextBtn);
+
+  function renderPage() {
+    repos.innerHTML = "";
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var slice = allRepos.slice(start, start + PAGE_SIZE);
+
+    slice.forEach(function (r) {
       var row = document.createElement("div");
       row.className = "item";
       var val = document.createElement("span");
@@ -394,6 +419,28 @@
         repos.appendChild(d);
       }
     });
+
+    var totalPages = Math.ceil(allRepos.length / PAGE_SIZE);
+    pageInfo.textContent = currentPage + " / " + totalPages;
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages;
+
+    if (allRepos.length > PAGE_SIZE) {
+      repos.parentNode.insertBefore(paginationWrap, repos.nextSibling);
+    }
+  }
+
+  function render(list) {
+    if (!list.length) {
+      repos.innerHTML = '<div class="item"><span class="val">No public repos.</span></div>';
+      return;
+    }
+    list.sort(function (a, b) {
+      return (b.stargazers_count || 0) - (a.stargazers_count || 0);
+    });
+    allRepos = list;
+    currentPage = 1;
+    renderPage();
   }
 
   function showError() {

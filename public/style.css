@@ -132,6 +132,20 @@ footer{
   position:relative;z-index:1;
 }
 
+.pagination{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin:14px 0 0;font-size:13px;
+}
+.page-btn{
+  background:transparent;border:1px solid var(--line);color:var(--dim);
+  border-radius:4px;padding:4px 10px;cursor:pointer;
+  font-family:"SFMono-Regular",Consolas,"Courier New",monospace;font-size:12px;
+  transition:color .2s,border-color .2s;
+}
+.page-btn:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+.page-btn:disabled{opacity:.35;cursor:default}
+.page-info{color:var(--dim);font-family:"SFMono-Regular",Consolas,"Courier New",monospace}
+
 @media(max-width:600px){
   pre.logo{font-size:8px}
   pre{font-size:10px}
