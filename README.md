@@ -8,7 +8,7 @@ Minimalist personal homepage — [voidm.com](https://voidm.com)
 - Auto dark/light theme
 - Interactive canvas background
 - Chiptune BGM (Web Audio API)
-- GitHub repos auto-fetch
+- GitHub top repos from static JSON config
 - Articles from JSON config
 
 ## Tech
@@ -25,10 +25,21 @@ cd voidm.com
 npx wrangler pages dev public
 ```
 
+## Sync GitHub repos
+
+Top 6 starred public repos are snapshotted in `public/data/repos.json`, so the
+page makes no GitHub API calls. Refresh it with:
+
+```sh
+GITHUB_TOKEN=ghp_xxx npm run sync:repos
+```
+
+The token is optional (60 req/h unauthenticated) and read from the env only.
+
 ## Deploy
 
 ```sh
-npx wrangler pages deploy public --branch main --project-name voidm-com
+npx wrangler pages deploy public --branch master --project-name voidm-com
 ```
 
 ## License

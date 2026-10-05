@@ -353,10 +353,10 @@
       .catch(function () {}); // silent fail — article list is non-critical
   }
 
-  /* ---------- GitHub repos (client-side fetch) ---------- */
+  /* ---------- GitHub repos (static snapshot: data/repos.json) ---------- */
   var repos = document.getElementById("repos");
   var hint = document.querySelector("#projects .hint");
-  var API = "https://api.github.com/users/" + GH_USER + "/repos?per_page=100&sort=updated";
+  var API = "data/repos.json";
   var PAGE_SIZE = 10;
   var currentPage = 1;
   var allRepos = [];
@@ -463,6 +463,5 @@
     .catch(showError)
     .finally(function () {
       if (timeout) clearTimeout(timeout);
-      if (hint && hint.textContent.indexOf("Loading") === 0) hint.textContent = "";
     });
 })();

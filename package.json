@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "wrangler pages dev public",
     "deploy": "wrangler pages deploy public",
-    "deploy:prod": "wrangler pages deploy public --branch=main --project-name=voidm-com"
+    "deploy:prod": "wrangler pages deploy public --branch=master --project-name=voidm-com",
+    "sync:repos": "node scripts/sync-repos.mjs"
   },
   "devDependencies": {
     "wrangler": "^3.0.0"

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "dylib_dobby_hook",
+    "html_url": "https://github.com/marlkiller/dylib_dobby_hook",
+    "description": "A macOS/IOS dylib project , aimed at enhancing and extending the functionality of target software.",
+    "language": "Objective-C",
+    "stargazers_count": 478,
+    "fork": false,
+    "homepage": "",
+    "pushed_at": "2026-10-05T04:13:42Z"
+  },
+  {
+    "name": "t66y_auto_register",
+    "html_url": "https://github.com/marlkiller/t66y_auto_register",
+    "description": "草榴社区邀请码扫码自动注册脚本",
+    "language": "Python",
+    "stargazers_count": 141,
+    "fork": false,
+    "homepage": "",
+    "pushed_at": "2024-01-12T08:27:54Z"
+  },
+  {
+    "name": "hp_patch",
+    "html_url": "https://github.com/marlkiller/hp_patch",
+    "description": "Hopper Disassembler for macOS 5.18.1 CracKed [U2B][SIP ON]",
+    "language": null,
+    "stargazers_count": 76,
+    "fork": false,
+    "homepage": "",
+    "pushed_at": "2025-05-09T17:27:11Z"
+  },
+  {
+    "name": "rust-desk-light",
+    "html_url": "https://github.com/marlkiller/rust-desk-light",
+    "description": "Lightweight Rust remote administration toolkit with GUI-based device management, remote desktop, file transfer, terminal access, camera viewing, and local-first control features.",
+    "language": "Rust",
+    "stargazers_count": 70,
+    "fork": false,
+    "homepage": "",
+    "pushed_at": "2026-06-08T02:19:06Z"
+  },
+  {
+    "name": "process_inject",
+    "html_url": "https://github.com/marlkiller/process_inject",
+    "description": "macOS Process Injection Tool",
+    "language": "Objective-C",
+    "stargazers_count": 61,
+    "fork": false,
+    "homepage": "",
+    "pushed_at": "2025-07-14T03:28:58Z"
+  },
+  {
+    "name": "flowforge-crypto",
+    "html_url": "https://github.com/marlkiller/flowforge-crypto",
+    "description": "A visual, node-based cryptography workbench for designing, testing, and debugging cryptographic workflows through an intuitive drag-and-drop interface. Built with React 19 & XYFlow.",
+    "language": "TypeScript",
+    "stargazers_count": 59,
+    "fork": false,
+    "homepage": "https://flowforge-crypto.pages.dev/",
+    "pushed_at": "2026-09-07T02:00:25Z"
+  }
+]
