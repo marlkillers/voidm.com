@@ -1,8 +1,6 @@
 (function () {
   "use strict";
 
-  var GH_USER = "marlkiller";
-
   /* ---------- interactive background (canvas + web audio) ---------- */
   (function () {
     var canvas = document.getElementById("bg-canvas");
@@ -444,13 +442,12 @@
   }
 
   function showError() {
-    hint.innerHTML = "";
-    hint.appendChild(document.createTextNode("Couldn't load repos. "));
+    hint.appendChild(document.createTextNode(" Couldn't load repos. "));
     var a = document.createElement("a");
-    a.href = "https://github.com/" + GH_USER;
+    a.href = "https://t.me/dylib_dobby_hook_chat";
     a.target = "_blank";
     a.rel = "noopener";
-    a.textContent = "See them on GitHub \u2192";
+    a.textContent = "Find me on Telegram \u2192";
     hint.appendChild(a);
   }
 

@@ -3,6 +3,7 @@
   --fg:#c8c8c8;
   --dim:#5f6670;
   --accent:#7aa2f7;
+  --danger:#f7768e;
   --line:#23272f;
 }
 
@@ -12,6 +13,7 @@
     --fg:#24292f;
     --dim:#57606a;
     --accent:#0969da;
+    --danger:#cf222e;
     --line:#d0d7de;
   }
 }
@@ -21,6 +23,7 @@
   --fg:#24292f;
   --dim:#57606a;
   --accent:#0969da;
+  --danger:#cf222e;
   --line:#d0d7de;
 }
 :root[data-theme="dark"]{
@@ -28,6 +31,7 @@
   --fg:#c8c8c8;
   --dim:#5f6670;
   --accent:#7aa2f7;
+  --danger:#f7768e;
   --line:#23272f;
 }
 
@@ -64,6 +68,22 @@ section.section{margin:44px 0 0}
 
 .hint{color:var(--dim);font-size:13px;margin-bottom:14px}
 .hint a{color:var(--accent)}
+
+.flag{
+  display:inline-block;
+  margin-left:8px;
+  padding:0 6px;
+  border:1px solid var(--danger);
+  border-radius:3px;
+  color:var(--danger);
+  font-family:"SFMono-Regular",Consolas,"Courier New",monospace;
+  font-size:10px;
+  line-height:16px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  vertical-align:middle;
+  white-space:nowrap;
+}
 
 .item{display:flex;gap:12px;margin-bottom:12px;font-size:14px;align-items:baseline}
 .item .label{color:var(--dim);font-family:"SFMono-Regular",Consolas,"Courier New",monospace;font-size:13px;min-width:100px;flex-shrink:0}
